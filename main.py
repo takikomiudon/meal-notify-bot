@@ -8,7 +8,10 @@ line_notify_token = os.getenv("LINE_NOTIFY_TOKEN")
 line_notify_api = "https://notify-api.line.me/api/notify"
 
 api_url = "https://gifukengakuryo.com/meal/check.php"
-api_headers = {"Cookie": os.getenv("COOKIE")}
+api_headers = {
+    "Cookie": os.getenv("COOKIE"),
+    "Accept": "application/json",
+}
 
 last_message_file = "last_message.txt"
 
@@ -27,7 +30,6 @@ def save_last_message(message):
 
 def get_new_message():
     api_response = requests.get(api_url, headers=api_headers)
-    print(api_response)
     api_response = api_response.json()
 
     message = ""
