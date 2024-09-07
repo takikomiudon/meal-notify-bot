@@ -27,7 +27,7 @@ def save_last_message(message):
 
 def get_new_message():
     api_response = requests.get(api_url, headers=api_headers)
-    print(api_response.status_code)
+    print(api_response)
     api_response = api_response.json()
 
     message = ""
