@@ -1,6 +1,9 @@
 name: Check for Message Changes
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     - cron: '*/1 * * * *'
 
