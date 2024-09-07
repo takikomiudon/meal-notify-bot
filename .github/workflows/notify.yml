@@ -24,5 +24,8 @@ jobs:
         run: |
           pip install requests python-dotenv
 
-      - name: Check for message changes and notify
+      - name: Run the Python script
+        env:
+          LINE_NOTIFY_TOKEN: ${{ secrets.LINE_NOTIFY_TOKEN }}
+          COOKIE: ${{ secrets.COOKIE }}
         run: python main.py
