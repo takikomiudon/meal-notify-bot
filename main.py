@@ -1,6 +1,4 @@
 import requests
-import schedule
-import time
 import os
 from dotenv import load_dotenv
 
@@ -12,26 +10,34 @@ line_notify_api = "https://notify-api.line.me/api/notify"
 api_url = "https://gifukengakuryo.com/meal/check.php"
 api_headers = {"Cookie": os.getenv("COOKIE")}
 
-last_message = ""
+last_message_file = "last_message.txt"
 
 
-def send_line_notify():
-    global last_message
+def get_last_message():
+    if os.path.exists(last_message_file):
+        with open(last_message_file, "r") as file:
+            return file.read()
+    return ""
 
+
+def save_last_message(message):
+    with open(last_message_file, "w") as file:
+        file.write(message)
+
+
+def get_new_message():
     api_response = requests.get(api_url, headers=api_headers).json()
 
     message = ""
     for data in api_response:
-        message += "\n"
         message += (
-            data["date"] + " 朝:" + str(data["m"]) + " 夕:" + str(data["e"])
+            "\n" + data["date"] + " 朝:" + str(data["m"]) + " 夕:" + str(data["e"])
         )
 
-    if message == last_message:
-        return
+    return message
 
-    last_message = message
 
+def send_line_notify(message):
     payload = {"message": message}
     headers = {"Authorization": "Bearer " + line_notify_token}
 
@@ -47,9 +53,9 @@ def send_line_notify():
         )
 
 
-send_line_notify()
-schedule.every(1).minutes.do(send_line_notify)
+last_message = get_last_message()
+new_message = get_new_message()
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+if new_message != last_message:
+    send_line_notify(new_message)
+    save_last_message(new_message)
